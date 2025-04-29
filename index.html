@@ -25,20 +25,30 @@
     <canvas id="unity-canvas" tabindex="-1"></canvas>
     <script src="Build/Build.loader.js"></script>
     <script>
-    var unityInstance = null;
+      var unityInstance = null;
 
-    createUnityInstance(document.querySelector("#unity-canvas"), {
-    	dataUrl: "Build/Build.data",
-    	frameworkUrl: "Build/Build.framework.js",
-    	codeUrl: "Build/Build.wasm",
-    	streamingAssetsUrl: "StreamingAssets",
-    	companyName: "DefaultCompany",
-    	productName: "My project (1)",
-    	productVersion: "0.1",
-    }).then((instance) => {
-    	unityInstance = instance;  // 外部から参照できるようにする
-   });
-   </script>
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/Build.data",
+        frameworkUrl: "Build/Build.framework.js",
+        codeUrl: "Build/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "My project (1)",
+        productVersion: "0.1",
+      }).then((instance) => {
+        unityInstance = instance;
+      });
 
+      // Bubbleなど親ページからのメッセージを受信する設定
+      window.addEventListener('message', function(event) {
+        // Bubble側からのメッセージを受け取ったらUnityに転送
+        if (event.data && event.data.type === 'LoadUnityAsset') {
+          var assetId = event.data.assetId;
+          // Unity側にassetIdを送る
+          unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
+        }
+      });
+
+    </script>
   </body>
 </html>
