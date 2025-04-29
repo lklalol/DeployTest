@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | 3D Canva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #231F20;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #231F20;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <script src="Build/Build.loader.js"></script>
+    <script>
+    var unityInstance = null;
+
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+    	dataUrl: "Build/Build.data",
+    	frameworkUrl: "Build/Build.framework.js",
+    	codeUrl: "Build/Build.wasm",
+    	streamingAssetsUrl: "StreamingAssets",
+    	companyName: "DefaultCompany",
+    	productName: "My project (1)",
+    	productVersion: "0.1",
+    }).then((instance) => {
+    	unityInstance = instance;  // 外部から参照できるようにする
+   });
+   </script>
+
+  </body>
+</html>
