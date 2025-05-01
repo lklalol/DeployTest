@@ -50,32 +50,39 @@
 
 
       // Bubbleなど親ページからのメッセージを受信する設定
-      window.addEventListener('message', function(event) {
+window.addEventListener('message', function(event) {
 
-        // Bubble側からのメッセージを受け取ったらUnityに転送
-        if (event.data && event.data.type === 'LoadUnityAsset') {
-          var assetId = event.data.assetId;
-          // Unity側にassetIdを送る
-          unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
-        }
+  // Bubble側からのメッセージを受け取ったらUnityに転送
+  if (event.data && event.data.type === 'LoadUnityAsset') {
+    var assetId = event.data.assetId;
+    unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
+  }
 
-      // 修正後の呼び出し先（TimelineControlUI → WebMessageReceiverに変更）
-      if (event.data && event.data.action === 'PlayTimeline') {
-        unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
-      }
-      if (event.data && event.data.action === 'PauseTimeline') {
-        unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
-      }
-      if (event.data && event.data.action === 'StopTimeline') {
-        unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
-      }
-      if (event.data && event.data.action === 'SeekTimeline') {
-  var normalizedTime = parseFloat(event.data.normalizedTime); // 確実に数値化する
-  if (isNaN(normalizedTime)) normalizedTime = 0; // NaNの場合は0にする
-  unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
-}
+  // 修正後の呼び出し先（TimelineControlUI → WebMessageReceiverに変更）
+  if (event.data && event.data.action === 'PlayTimeline') {
+    unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
+  }
+  if (event.data && event.data.action === 'PauseTimeline') {
+    unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
+  }
+  if (event.data && event.data.action === 'StopTimeline') {
+    unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
+  }
+  if (event.data && event.data.action === 'SeekTimeline') {
+    var normalizedTime = parseFloat(event.data.normalizedTime);
+    if (isNaN(normalizedTime)) normalizedTime = 0;
+    unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+  }
 
-      });
+});
+
+// ↓追加するコード（Bubble iframe経由の受信設定）↓
+window.addEventListener("message", function(event) {
+  if (event.data.type === "SeekTimeline") {
+    unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", event.data.normalizedTime);
+  }
+});
+
 
     </script>
   </body>
