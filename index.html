@@ -76,10 +76,11 @@ window.addEventListener('message', function(event) {
 
 });
 
-// ↓追加するコード（Bubble iframe経由の受信設定）↓
-window.addEventListener("message", function(event) {
-  if (event.data.type === "SeekTimeline") {
-    unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", event.data.normalizedTime);
+  // ↓追加するコード（Bubble iframe経由の受信設定）↓
+  window.addEventListener("message", function(event) {
+   if (event.data.type === "SeekTimeline") {
+     console.log("✅ Unity側受信成功:", event.data.normalizedTime);
+     unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", event.data.normalizedTime);
   }
 });
 
