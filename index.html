@@ -38,15 +38,15 @@
       }).then((instance) => {
         unityInstance = instance;
 
-	window.parent.postMessage({ type: 'UnityReady' }, '*');
+ window.parent.postMessage({ type: 'UnityReady' }, '*');
 
       });
 
 
-	function SceneLoadCompleted() {
-   	 window.parent.postMessage({ type: 'SceneLoaded' }, '*');
-    	console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
-  	}
+ function SceneLoadCompleted() {
+     window.parent.postMessage({ type: 'SceneLoaded' }, '*');
+     console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
+   }
 
 
       // Bubbleなど親ページからのメッセージを受信する設定
@@ -59,21 +59,20 @@
           unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
         }
 
-// 修正後の呼び出し先（TimelineControlUI → WebMessageReceiverに変更）
-if (event.data && event.data.action === 'PlayTimeline') {
-  unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
-}
-if (event.data && event.data.action === 'PauseTimeline') {
-  unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
-}
-if (event.data && event.data.action === 'StopTimeline') {
-  unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
-}
-if (event.data && event.data.action === 'SeekTimeline') {
-  var normalizedTime = event.data.normalizedTime;
-  unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
-}
-
+      // 修正後の呼び出し先（TimelineControlUI → WebMessageReceiverに変更）
+      if (event.data && event.data.action === 'PlayTimeline') {
+        unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
+      }
+      if (event.data && event.data.action === 'PauseTimeline') {
+        unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
+      }
+      if (event.data && event.data.action === 'StopTimeline') {
+        unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
+      }
+      if (event.data && event.data.action === 'SeekTimeline') {
+        var normalizedTime = event.data.normalizedTime;
+        unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+      }
       });
 
     </script>
