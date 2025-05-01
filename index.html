@@ -59,23 +59,20 @@
           unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
         }
 
-       // Timeline操作用
-     if (event.data && event.data.action === 'PlayTimeline') {
-       unityInstance.SendMessage("TimelineControlUI", "ExternalPlay");
-     }
-
-     if (event.data && event.data.action === 'PauseTimeline') {
-       unityInstance.SendMessage("TimelineControlUI", "ExternalPause");
-     }
-
-     if (event.data && event.data.action === 'StopTimeline') {
-       unityInstance.SendMessage("TimelineControlUI", "ExternalStop");
-     }
-
-     if (event.data && event.data.action === 'SeekTimeline') {
-       var normalizedTime = event.data.normalizedTime;
-       unityInstance.SendMessage("TimelineControlUI", "ExternalSetTime", normalizedTime);
-     }
+// 修正後の呼び出し先（TimelineControlUI → WebMessageReceiverに変更）
+if (event.data && event.data.action === 'PlayTimeline') {
+  unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
+}
+if (event.data && event.data.action === 'PauseTimeline') {
+  unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
+}
+if (event.data && event.data.action === 'StopTimeline') {
+  unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
+}
+if (event.data && event.data.action === 'SeekTimeline') {
+  var normalizedTime = event.data.normalizedTime;
+  unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+}
 
       });
 
