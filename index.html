@@ -70,9 +70,11 @@
         unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
       }
       if (event.data && event.data.action === 'SeekTimeline') {
-        var normalizedTime = event.data.normalizedTime;
-        unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
-      }
+  var normalizedTime = parseFloat(event.data.normalizedTime); // 確実に数値化する
+  if (isNaN(normalizedTime)) normalizedTime = 0; // NaNの場合は0にする
+  unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+}
+
       });
 
     </script>
