@@ -43,6 +43,12 @@
       });
 
 
+	function SceneLoadCompleted() {
+   	 window.parent.postMessage({ type: 'SceneLoaded' }, '*');
+    	console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
+  	}
+
+
       // Bubbleなど親ページからのメッセージを受信する設定
       window.addEventListener('message', function(event) {
 
