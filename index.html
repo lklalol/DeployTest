@@ -37,10 +37,15 @@
         productVersion: "0.1",
       }).then((instance) => {
         unityInstance = instance;
+
+	window.parent.postMessage({ type: 'UnityReady' }, '*');
+
       });
+
 
       // Bubbleなど親ページからのメッセージを受信する設定
       window.addEventListener('message', function(event) {
+
         // Bubble側からのメッセージを受け取ったらUnityに転送
         if (event.data && event.data.type === 'LoadUnityAsset') {
           var assetId = event.data.assetId;
