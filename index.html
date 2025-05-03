@@ -83,7 +83,19 @@
             }
 	  }
 
-        }
+
+	// 解像度設定
+  	if (event.data && event.data.type === 'SetResolution') {
+        　console.log("📨 iframe内でメッセージ受信完了:", event.data);
+
+    	　if (typeof unityInstance !== "undefined") {
+      　　　unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+      　　　console.log("✅ Unityスクリプトにメッセージ送信しました");
+    　　　} else {
+      　　　console.warn("⚠️ unityInstanceがまだ定義されていません");
+    　　　}
+ 　　　 }
+      }
 
       });
     </script>
