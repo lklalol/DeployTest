@@ -72,10 +72,15 @@
           }
 
           // アップロード処理の追加（今回の重要ポイント）
-          if (event.data.action === 'RequestFileUpload') {
-    		unityInstance.SendMessage('WebMessageReceiver', 'RequestFileUpload', event.data.mediaType);
-    		console.log("✅ Unityにアップロード要求を送信しました。メディアタイプ：" + event.data.mediaType);
-	  }
+          if (event.data.action === "RequestFileUpload") {
+    	    let mediaType = event.data.mediaType;
+
+            if (typeof mediaType === 'string' && mediaType.length > 0) {
+              unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
+              console.log("✅ Unityにメッセージを送信しました。mediaType:", mediaType);
+            } else {
+              console.error("❌ mediaTypeが正しくありません:", mediaType);
+            }
 
         }
 
