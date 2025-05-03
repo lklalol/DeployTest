@@ -95,6 +95,20 @@
       　　　console.warn("⚠️ unityInstanceがまだ定義されていません");
     　　　}
  　　　 }
+
+
+　　　 // 録画ボタン
+       if (event.data && event.data.type === 'Recording') {
+          console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
+
+          if (typeof unityInstance !== "undefined") {
+            unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
+            console.log("✅ Unityスクリプトに録画メッセージ送信しました");
+          } else {
+            console.warn("⚠️ unityInstanceがまだ定義されていません");
+          }
+        }
+
       }
 
       });
