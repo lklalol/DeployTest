@@ -73,9 +73,10 @@
 
           // アップロード処理の追加（今回の重要ポイント）
           if (event.data.action === 'RequestFileUpload') {
-            unityInstance.SendMessage('WebMessageReceiver', 'RequestFileUpload');
-            console.log("✅ Unityにアップロード要求を送信しました");
-          }
+    		unityInstance.SendMessage('WebMessageReceiver', 'RequestFileUpload', event.data.mediaType);
+    		console.log("✅ Unityにアップロード要求を送信しました。メディアタイプ：" + event.data.mediaType);
+	  }
+
         }
 
       });
