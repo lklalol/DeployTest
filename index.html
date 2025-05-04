@@ -46,16 +46,12 @@
       }
 
       window.addEventListener('message', function(event) {
-
         if (event.data) {
 
-          // Bubble側からのアセット読み込み要求
           if (event.data.type === 'LoadUnityAsset') {
-            var assetId = event.data.assetId;
-            unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
+            unityInstance.SendMessage("ExternalLoader", "LoadAssetById", event.data.assetId);
           }
 
-          // Timeline操作 (再生、停止など)
           if (event.data.action === 'PlayTimeline') {
             unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
           }
@@ -66,50 +62,77 @@
             unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
           }
           if (event.data.action === 'SeekTimeline') {
-            var normalizedTime = parseFloat(event.data.normalizedTime);
-            if (isNaN(normalizedTime)) normalizedTime = 0;
-            unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+            unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", parseFloat(event.data.normalizedTime) || 0);
           }
 
-          // ファイルアップロード処理
           if (event.data.action === "RequestFileUpload") {
-            let mediaType = event.data.mediaType;
-
-            if (typeof mediaType === 'string' && mediaType.length > 0) {
-              unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
-              console.log("✅ Unityにメッセージを送信しました。mediaType:", mediaType);
+            if (typeof event.data.mediaType === 'string' && event.data.mediaType.length > 0) {
+              unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", event.data.mediaType);
+              console.log("✅ Unityにメッセージを送信しました。mediaType:", event.data.mediaType);
             } else {
-              console.error("❌ mediaTypeが正しくありません:", mediaType);
+              console.error("❌ mediaTypeが正しくありません:", event.data.mediaType);
             }
           }
 
-          // 解像度設定
           if (event.data.type === 'SetResolution') {
             console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
-
-            if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
-              console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
-            } else {
-              console.warn("⚠️ unityInstanceがまだ定義されていません");
-            }
+            unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+            console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
           }
 
-          // 録画処理 (新しく追加したもの)
           if (event.data.type === 'Recording') {
             console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
-
-            if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
-              console.log("✅ Unityスクリプトに録画メッセージ送信しました");
-            } else {
-              console.warn("⚠️ unityInstanceがまだ定義されていません");
-            }
+            unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
+            console.log("✅ Unityスクリプトに録画メッセージ送信しました");
           }
-
         }
-
       });
+
+      function StartWebGLRecording(width, height) {
+        const canvas = document.querySelector("#unity-canvas");
+
+        // 🔴 canvasサイズを強制的に指定解像度にセット
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        canvas.width = width;
+        canvas.height = height;
+
+        console.log(`[JS] StartWebGLRecording called with resolution: ${width}x${height}`);
+
+        const stream = canvas.captureStream();
+        window.mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
+        window.recordedChunks = [];
+
+        window.mediaRecorder.ondataavailable = function(event) {
+          if (event.data.size > 0) window.recordedChunks.push(event.data);
+        };
+
+        window.mediaRecorder.onstop = function() {
+          const blob = new Blob(window.recordedChunks, { type: "video/webm" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style.display = "none";
+          a.href = url;
+          a.download = "recording.webm";
+          a.click();
+          window.URL.revokeObjectURL(url);
+
+          //🔴録画終了後canvasサイズを元に戻す（フルサイズ）
+          canvas.style.width = '100%';
+          canvas.style.height = '100%';
+        };
+
+        window.mediaRecorder.start();
+        console.log("[JS] MediaRecorder started");
+      }
+
+      function StopWebGLRecording() {
+        if (window.mediaRecorder && window.mediaRecorder.state !== 'inactive') {
+          window.mediaRecorder.stop();
+          console.log("[JS] MediaRecorder stopped");
+        }
+      }
     </script>
   </body>
 </html>
