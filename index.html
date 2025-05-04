@@ -6,13 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
   <style>
     html, body {
-      margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #231F20;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #231F20;
+      height: 100vh; /* ここをvh指定 */
     }
     #canvas-container {
-      width: 100%; height: 100vh; position: relative; background: #231F20;
+      width: 100%;
+      height: 100vh; /* ここもvh指定が必要 */
+      position: relative;
+      background: #231F20;
     }
     #unity-canvas {
-      width: 100%; height: 100%; display: block; object-fit: contain;
+      width: 100%;
+      height: 100%; /* コンテナの100% */
+      display: block;
+      object-fit: contain;
       background: #231F20;
     }
   </style>
@@ -35,7 +45,7 @@
       companyName: "DefaultCompany",
       productName: "My project (1)",
       productVersion: "0.1",
-      matchWebGLToCanvasSize: false, // ここ重要
+      matchWebGLToCanvasSize: false,
     }).then((instance) => {
       unityInstance = instance;
       resizeCanvas();
@@ -44,17 +54,14 @@
     function resizeCanvas(width, height) {
       const container = document.getElementById('canvas-container');
 
-      // 描画解像度設定（canvasのバッファサイズのみ変更）
       if (width && height) {
         canvas.width = width;
         canvas.height = height;
       } else {
-        // 初期化時、iframeサイズでバッファサイズ決定
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
       }
 
-      // 表示サイズは常にコンテナにフィットさせる（変更なし）
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       canvas.style.objectFit = "contain";
@@ -108,7 +115,7 @@
         a.download = "recording.webm";
         a.click();
         window.URL.revokeObjectURL(url);
-        resizeCanvas(); //元に戻す
+        resizeCanvas(); // 元に戻す
       };
       mediaRecorder.start();
       console.log("録画開始しました");
@@ -121,7 +128,7 @@
       }
     }
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', () => resizeCanvas());
   </script>
 </body>
 </html>
