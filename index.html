@@ -35,6 +35,7 @@
         companyName: "DefaultCompany",
         productName: "My project (1)",
         productVersion: "0.1",
+        matchWebGLToCanvasSize: false, //🔴重要：自動リサイズ停止
       }).then((instance) => {
         unityInstance = instance;
         window.parent.postMessage({ type: 'UnityReady' }, '*');
@@ -76,6 +77,7 @@
 
           if (event.data.type === 'SetResolution') {
             console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
+            SetCanvasResolution(event.data.width, event.data.height);
             unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
             console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
           }
@@ -88,12 +90,22 @@
         }
       });
 
+      //🔴 新規追加: canvas解像度を明示的に設定する関数
+      function SetCanvasResolution(width, height) {
+        const canvas = document.getElementById('unity-canvas');
+        canvas.width = width;      // 描画解像度
+        canvas.height = height;
+
+        canvas.style.width = '100%';  // 表示サイズを画面幅にフィット
+        canvas.style.height = 'auto'; // 縦横比を維持
+
+        console.log(`🔧 Canvas解像度設定：${width} x ${height}`);
+      }
+
       function StartWebGLRecording(width, height) {
         const canvas = document.querySelector("#unity-canvas");
 
-        // 🔴 canvasサイズを強制的に指定解像度にセット
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
+        //録画用にCanvasサイズを設定
         canvas.width = width;
         canvas.height = height;
 
@@ -118,9 +130,9 @@
           a.click();
           window.URL.revokeObjectURL(url);
 
-          //🔴録画終了後canvasサイズを元に戻す（フルサイズ）
+          //録画終了後canvasサイズを元に戻す（フルサイズ）
           canvas.style.width = '100%';
-          canvas.style.height = '100%';
+          canvas.style.height = 'auto';
         };
 
         window.mediaRecorder.start();
