@@ -1,127 +1,115 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-  <meta charset="utf-8">
-  <title>Unity WebGL Player | 3D Canva</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
-  <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%; overflow: hidden; background: #231F20;
-    }
-    #canvas-container {
-      width: 100%; height: 100%; position: relative; background: #231F20;
-    }
-    #unity-canvas {
-      width: 100%; height: 100%; display: block; object-fit: contain;
-      background: #231F20;
-    }
-  </style>
-</head>
-<body>
-  <div id="canvas-container">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | 3D Canva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #231F20;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #231F20;
+      }
+    </style>
+  </head>
+  <body>
     <canvas id="unity-canvas" tabindex="-1"></canvas>
-  </div>
+    <script src="Build/Build.loader.js"></script>
+    <script>
+      var unityInstance = null;
 
-  <script src="Build/Build.loader.js"></script>
-  <script>
-    const canvas = document.querySelector("#unity-canvas");
-    let unityInstance = null;
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/Build.data",
+        frameworkUrl: "Build/Build.framework.js",
+        codeUrl: "Build/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "My project (1)",
+        productVersion: "0.1",
+      }).then((instance) => {
+        unityInstance = instance;
+        window.parent.postMessage({ type: 'UnityReady' }, '*');
+      });
 
-    createUnityInstance(canvas, {
-      dataUrl: "Build/Build.data",
-      frameworkUrl: "Build/Build.framework.js",
-      codeUrl: "Build/Build.wasm",
-      streamingAssetsUrl: "StreamingAssets",
-      companyName: "DefaultCompany",
-      productName: "My project (1)",
-      productVersion: "0.1",
-      matchWebGLToCanvasSize: false, // ここ重要
-    }).then((instance) => {
-      unityInstance = instance;
-      resizeCanvas();
-    });
-
-    function resizeCanvas(width, height) {
-      const container = document.getElementById('canvas-container');
-
-      // 描画解像度設定（canvasのバッファサイズのみ変更）
-      if (width && height) {
-        canvas.width = width;
-        canvas.height = height;
-      } else {
-        // 初期化時、iframeサイズでバッファサイズ決定
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
+      function SceneLoadCompleted() {
+        window.parent.postMessage({ type: 'SceneLoaded' }, '*');
+        console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
       }
 
-      // 表示サイズは常にコンテナにフィットさせる（変更なし）
-      canvas.style.width = "100%";
-      canvas.style.height = "100%";
-      canvas.style.objectFit = "contain";
-    }
+      window.addEventListener('message', function(event) {
 
-    window.addEventListener('message', (event) => {
-      if (event.data) {
-        if (event.data.type === 'SetResolution') {
-          resizeCanvas(event.data.width, event.data.height);
-          unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
-        }
+        if (event.data) {
 
-        if (event.data.type === 'Recording') {
-          if(event.data.action === "Start"){
-            StartWebGLRecording();
-            unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
-          } else if(event.data.action === "Stop"){
-            StopWebGLRecording();
-            unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
+          // Bubble側からのアセット読み込み要求
+          if (event.data.type === 'LoadUnityAsset') {
+            var assetId = event.data.assetId;
+            unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
           }
+
+          // Timeline操作 (再生、停止など)
+          if (event.data.action === 'PlayTimeline') {
+            unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
+          }
+          if (event.data.action === 'PauseTimeline') {
+            unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
+          }
+          if (event.data.action === 'StopTimeline') {
+            unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
+          }
+          if (event.data.action === 'SeekTimeline') {
+            var normalizedTime = parseFloat(event.data.normalizedTime);
+            if (isNaN(normalizedTime)) normalizedTime = 0;
+            unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+          }
+
+          // ファイルアップロード処理
+          if (event.data.action === "RequestFileUpload") {
+            let mediaType = event.data.mediaType;
+
+            if (typeof mediaType === 'string' && mediaType.length > 0) {
+              unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
+              console.log("✅ Unityにメッセージを送信しました。mediaType:", mediaType);
+            } else {
+              console.error("❌ mediaTypeが正しくありません:", mediaType);
+            }
+          }
+
+          // 解像度設定
+          if (event.data.type === 'SetResolution') {
+            console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
+
+            if (typeof unityInstance !== "undefined") {
+              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+              console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
+            } else {
+              console.warn("⚠️ unityInstanceがまだ定義されていません");
+            }
+          }
+
+          // 録画処理 (新しく追加したもの)
+          if (event.data.type === 'Recording') {
+            console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
+
+            if (typeof unityInstance !== "undefined") {
+              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
+              console.log("✅ Unityスクリプトに録画メッセージ送信しました");
+            } else {
+              console.warn("⚠️ unityInstanceがまだ定義されていません");
+            }
+          }
+
         }
 
-        if (event.data.action === 'PlayTimeline') {
-          unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
-        }
-        if (event.data.action === 'PauseTimeline') {
-          unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
-        }
-        if (event.data.action === 'StopTimeline') {
-          unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
-        }
-        if (event.data.action === 'SeekTimeline') {
-          unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", parseFloat(event.data.normalizedTime) || 0);
-        }
-      }
-    });
-
-    let mediaRecorder, recordedChunks;
-    function StartWebGLRecording() {
-      const stream = canvas.captureStream();
-      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
-      recordedChunks = [];
-      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: "video/webm" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style.display = "none";
-        a.href = url;
-        a.download = "recording.webm";
-        a.click();
-        window.URL.revokeObjectURL(url);
-        resizeCanvas(); //元に戻す
-      };
-      mediaRecorder.start();
-      console.log("録画開始しました");
-    }
-
-    function StopWebGLRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        console.log("録画停止しました");
-      }
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-  </script>
-</body>
+      });
+    </script>
+  </body>
 </html>
