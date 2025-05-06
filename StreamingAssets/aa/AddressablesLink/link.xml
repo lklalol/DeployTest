@@ -1,6 +1,8 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="AsciiArtFilter" preserve="all" />
     <type fullname="Flockaroo.ColoredPencilsEffect" preserve="all" />
+    <type fullname="Jobberwocky.MosaicShader.Source.MosaicCameraScript" preserve="all" />
   </assembly>
   <assembly fullname="Battlehub.RTEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Battlehub.RTCommon.ExposeToEditor" preserve="all" />
