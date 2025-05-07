@@ -45,70 +45,76 @@
         console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
       }
 
+      // Canvasの解像度変更処理（録画時のCanvas調整用）
+      function setCanvasResolution(width, height) {
+        const canvas = document.querySelector("#unity-canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        console.log(`Canvas解像度を設定しました: ${width} x ${height}`);
+      }
+
+      // Unityから録画終了を受け取る関数
+      function RecordingFinished() {
+        window.parent.postMessage({ type: 'RecordingFinished' }, '*');
+        console.log("録画終了メッセージをBubbleに送信しました");
+      }
+
+      // Web側（Bubble側）からのメッセージ受信処理
       window.addEventListener('message', function(event) {
+        const data = event.data;
+        if (!unityInstance || !data) return;
 
-        if (event.data) {
-
-          // Bubble側からのアセット読み込み要求
-          if (event.data.type === 'LoadUnityAsset') {
-            var assetId = event.data.assetId;
-            unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
-          }
-
-          // Timeline操作 (再生、停止など)
-          if (event.data.action === 'PlayTimeline') {
-            unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
-          }
-          if (event.data.action === 'PauseTimeline') {
-            unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
-          }
-          if (event.data.action === 'StopTimeline') {
-            unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
-          }
-          if (event.data.action === 'SeekTimeline') {
-            var normalizedTime = parseFloat(event.data.normalizedTime);
-            if (isNaN(normalizedTime)) normalizedTime = 0;
-            unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
-          }
-
-          // ファイルアップロード処理
-          if (event.data.action === "RequestFileUpload") {
-            let mediaType = event.data.mediaType;
-
-            if (typeof mediaType === 'string' && mediaType.length > 0) {
-              unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
-              console.log("✅ Unityにメッセージを送信しました。mediaType:", mediaType);
-            } else {
-              console.error("❌ mediaTypeが正しくありません:", mediaType);
-            }
-          }
-
-          // 解像度設定
-          if (event.data.type === 'SetResolution') {
-            console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
-
-            if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
-              console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
-            } else {
-              console.warn("⚠️ unityInstanceがまだ定義されていません");
-            }
-          }
-
-          // 録画処理 (新しく追加したもの)
-          if (event.data.type === 'Recording') {
-            console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
-
-            if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
-              console.log("✅ Unityスクリプトに録画メッセージ送信しました");
-            } else {
-              console.warn("⚠️ unityInstanceがまだ定義されていません");
-            }
-          }
-
+        if (data.type === 'LoadUnityAsset') {
+          unityInstance.SendMessage("ExternalLoader", "LoadAssetById", data.assetId);
         }
 
+        // Timelineの操作
+        if (data.action === 'PlayTimeline') {
+          unityInstance.SendMessage("WebMessageReceiver", "ExternalPlay");
+        }
+        if (data.action === 'PauseTimeline') {
+          unityInstance.SendMessage("WebMessageReceiver", "ExternalPause");
+        }
+        if (data.action === 'StopTimeline') {
+          unityInstance.SendMessage("WebMessageReceiver", "ExternalStop");
+        }
+        if (data.action === 'SeekTimeline') {
+          var normalizedTime = parseFloat(data.normalizedTime);
+          if (isNaN(normalizedTime)) normalizedTime = 0;
+          unityInstance.SendMessage("WebMessageReceiver", "ExternalSetTime", normalizedTime);
+        }
+
+        // ファイルアップロード処理
+        if (data.action === "RequestFileUpload") {
+          let mediaType = data.mediaType;
+          if (typeof mediaType === 'string' && mediaType.length > 0) {
+            unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
+            console.log("✅ Unityにファイルアップロード要求を送信: mediaType:", mediaType);
+          } else {
+            console.error("❌ mediaTypeが不正:", mediaType);
+          }
+        }
+
+        // 録画処理 (最新RecordingManagerに対応)
+        if (data.type === 'Recording') {
+          if (data.action === 'Start') {
+            setCanvasResolution(data.width, data.height);
+            unityInstance.SendMessage("RecordingManager", "StartRecording", JSON.stringify({ width: data.width, height: data.height }));
+            console.log("✅ Unityに録画開始メッセージ送信");
+          } else if (data.action === 'Stop') {
+            unityInstance.SendMessage("RecordingManager", "StopRecording");
+            console.log("⏹️ Unityに録画停止メッセージ送信");
+          }
+        }
+
+        // 解像度設定 (別途Unity側で必要な場合用)
+        if (data.type === 'SetResolution') {
+          unityInstance.SendMessage("RecordingConfigReceiver", "OnReceiveResolution", JSON.stringify(data));
+          setCanvasResolution(data.width, data.height);
+          console.log("✅ Unityに解像度メッセージ送信");
+        }
       });
     </script>
   </body>
