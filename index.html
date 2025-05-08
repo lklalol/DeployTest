@@ -52,7 +52,7 @@
           // Bubble側からのアセット読み込み要求
           if (event.data.type === 'LoadUnityAsset') {
             var assetId = event.data.assetId;
-            unityInstance.SendMessage("ExternalLoader", "LoadAssetById", assetId);
+            unityInstance.SendMessage("SupabaseManager", "LoadAssetById", assetId);
           }
 
           // Timeline操作 (再生、停止など)
