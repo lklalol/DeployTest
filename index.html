@@ -52,7 +52,7 @@
 	      // アスペクト比送信
 	      if (event.data.type === 'SetAspectRatioByLabel') {
 		    if (typeof unityInstance !== "undefined") {
-        		unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+        		unityInstance.SendMessage("GamePreviewView", "OnReceiveResolution", JSON.stringify(event.data));
                 console.log("✅ Unityにアスペクト比メッセージを送信しました:", event.data);
       	        } else {
         	        console.warn("⚠️ unityInstanceがまだ定義されていません");
