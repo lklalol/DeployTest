@@ -111,5 +111,13 @@
 
       });
     </script>
+<script>
+    window.addEventListener("AspectOptionsReceived", function(event) {
+        const labels = event.detail.map(opt => opt.label);
+
+        // Bubbleに直接labels（リスト形式）を渡す場合
+        bubble_fn_aspect_options_received(labels);
+    });
+</script>
   </body>
 </html>
