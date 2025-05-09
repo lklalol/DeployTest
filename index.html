@@ -49,6 +49,16 @@
 
         if (event.data) {
 
+	      // アスペクト比送信
+	      if (event.data.type === 'SetAspectRatioByLabel') {
+		    if (typeof unityInstance !== "undefined") {
+        		unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+                console.log("✅ Unityにアスペクト比メッセージを送信しました:", event.data);
+      	        } else {
+        	        console.warn("⚠️ unityInstanceがまだ定義されていません");
+      		}
+    	  }
+
           // Bubble側からのアセット読み込み要求
           if (event.data.type === 'LoadUnityAsset') {
             var assetId = event.data.assetId;
