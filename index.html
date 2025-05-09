@@ -111,17 +111,5 @@
 
       });
     </script>
-<script>
-    window.addEventListener("AspectOptionsReceived", function(event) {
-        const labels = event.detail.map(opt => opt.label);
-
-        // Bubbleに直接labelsを渡すのはNG。postMessageを使うこと。
-        window.parent.postMessage({ 
-            type: 'AspectOptionsReceived',
-            labels: labels 
-        }, '*');
-    });
-</script>
-
   </body>
 </html>
