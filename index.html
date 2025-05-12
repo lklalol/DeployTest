@@ -45,6 +45,16 @@
         console.log("✅ シーンの読み込みが完了しました (Unity → Web)");
       }
 
+      function SendRecordingStart() {
+        window.parent.postMessage({ type: 'Recording', action: 'Start' }, '*');
+        console.log("✅ Unity → ブラウザ (録画開始)");
+      }
+
+      function SendRecordingStop() {
+        window.parent.postMessage({ type: 'Recording', action: 'Stop' }, '*');
+        console.log("✅ Unity → ブラウザ (録画停止)");
+      }
+
       window.addEventListener('message', function(event) {
 
         if (event.data) {
@@ -116,9 +126,7 @@
               console.warn("⚠️ unityInstanceがまだ定義されていません");
             }
           }
-
         }
-
       });
     </script>
   </body>
