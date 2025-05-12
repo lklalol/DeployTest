@@ -1,0 +1,91 @@
+<style>
+#unityIframe {
+  width: 100%;
+  height: 100vh;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.fixedSize {
+  width: unset !important;
+  height: unset !important;
+}
+</style>
+
+<iframe 
+  id="unityIframe" 
+  src="https://lklalol.github.io/DeployTest/index.html"
+  allow="fullscreen"
+  style="width:100%; height:100vh; border:0; overflow:hidden;">
+</iframe>
+
+<script>
+var unitySceneLoaded = false;
+
+window.addEventListener('message', function(event) {
+  // シーン読み込み完了の処理
+  if (event.data && event.data.type === 'SceneLoaded') {
+    unitySceneLoaded = true;
+    console.log("✅ Unityシーンの読み込みが完了しました");
+  }
+
+  // Timeline進捗更新処理（スライダーと連動）
+  if (event.data && (event.data.type === 'TimelineProgress' || event.data.type === 'UpdateBubbleSlider')) {
+    let normalizedValue = parseFloat(event.data.normalizedValue || event.data.normalizedTime);
+    if (isNaN(normalizedValue)) normalizedValue = 0;
+
+    if (window.bubble_fn_timelinePosition) {
+      window.bubble_fn_timelinePosition(normalizedValue * 100);
+    } else {
+      console.warn("⚠️ bubble_fn_timelinePositionが見つかりません。JavaScript to Bubbleの設定を再確認してください。");
+    }
+  }
+
+  // Unityへのファイルアップロード要求処理
+  if (event.data && event.data.action === 'RequestFileUpload') {
+    if (typeof unityInstance !== 'undefined') {
+      unityInstance.SendMessage('WebMessageReceiver', 'RequestFileUpload');
+      console.log("✅ Unityにアップロード要求を送信しました");
+    } else {
+      console.error("⚠️ unityInstanceが未定義です。Unityがロードされているか確認してください");
+    }
+  }
+
+  // 録画時のiframeのサイズ変更
+  if (event.data && event.data.type === 'SetIframeResolution') {
+    const iframe = document.getElementById('unityIframe');
+    if (!iframe) return;
+
+    if (event.data.width > 0 && event.data.height > 0) {
+      iframe.classList.add('fixedSize');
+      iframe.style.width = event.data.width + 'px';
+      iframe.style.height = event.data.height + 'px';
+      console.log(`🖼️ iframeサイズを ${event.data.width}x${event.data.height} に変更`);
+    } else {
+      // 元のサイズ（例: 100% x 100vh）に戻す
+      iframe.classList.remove('fixedSize');
+      iframe.style.width = '100%';
+      iframe.style.height = '100vh';
+      console.log("↩️ iframeサイズを初期値に戻しました");
+    }
+  }
+});
+
+// Unityへメッセージを送信する関数（再生、停止、シークなど）
+function sendUnityMessage(message) {
+  if (unitySceneLoaded) {
+    document.getElementById('unityIframe').contentWindow.postMessage(message, '*');
+  } else {
+    console.warn("⚠️ Unityシーンがまだ読み込まれていません！");
+  }
+}
+
+// 再生制御用関数（これらはBubbleのボタンから呼び出します）
+function PlayTimeline() { sendUnityMessage({ action: "PlayTimeline" }); }
+function PauseTimeline() { sendUnityMessage({ action: "PauseTimeline" }); }
+function StopTimeline() { sendUnityMessage({ action: "StopTimeline" }); }
+function SeekTimeline(normalizedTime) { sendUnityMessage({ action: "SeekTimeline", normalizedTime }); }
+</script>
