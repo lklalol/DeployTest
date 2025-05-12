@@ -116,30 +116,28 @@
           }
 
           // UnityのCanvasサイズ変更
-          if (event.data && event.data.type === 'SetIframeResolution') {
-  const canvas = document.getElementById('unity-canvas');
+          if (event.data.type === 'SetIframeResolution') {
+            const canvas = document.getElementById('unity-canvas');
 
-  // ✅ Unityが初期化されていないならキャンセル
-  if (typeof unityInstance === 'undefined' || !unityInstance.Module) {
-    console.warn("⚠️ Unityがまだ完全に初期化されていません。canvasサイズ変更をスキップ");
-    return;
-  }
+            if (typeof unityInstance === 'undefined' || !unityInstance.Module) {
+              console.warn("⚠️ Unityがまだ完全に初期化されていません。canvasサイズ変更をスキップ");
+              return;
+            }
 
-  if (event.data.width > 0 && event.data.height > 0) {
-    canvas.style.width = event.data.width + 'px';
-    canvas.style.height = event.data.height + 'px';
-    canvas.width = event.data.width;
-    canvas.height = event.data.height;
-    console.log(`🖼️ canvasサイズを ${event.data.width}x${event.data.height} に変更`);
-  } else {
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.removeAttribute('width');
-    canvas.removeAttribute('height');
-    console.log("↩️ canvasサイズを初期値に戻しました");
-  }
-}
-
+            if (event.data.width > 0 && event.data.height > 0) {
+              canvas.style.width = event.data.width + 'px';
+              canvas.style.height = event.data.height + 'px';
+              canvas.width = event.data.width;
+              canvas.height = event.data.height;
+              console.log(`🖼️ canvasサイズを ${event.data.width}x${event.data.height} に変更`);
+            } else {
+              canvas.style.width = '100%';
+              canvas.style.height = '100%';
+              canvas.removeAttribute('width');
+              canvas.removeAttribute('height');
+              console.log("↩️ canvasサイズを初期値に戻しました");
+            }
+          } 
 
           // 録画処理
           if (event.data.type === 'Recording') {
@@ -152,8 +150,9 @@
               console.warn("⚠️ unityInstanceがまだ定義されていません");
             }
           }
-        }
-      });
+        } // 録画処理 if
+      } // event.data の全体 if
+    }); // window.addEventListener
     </script>
   </body>
 </html>
