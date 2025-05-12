@@ -108,19 +108,19 @@
             console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
 
             if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveResolution", JSON.stringify(event.data));
+              unityInstance.SendMessage("RecordingManager", "OnReceiveResolution", JSON.stringify(event.data));
               console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
             } else {
               console.warn("⚠️ unityInstanceがまだ定義されていません");
             }
           }
 
-          // 録画処理 (新しく追加したもの)
+          // 録画処理
           if (event.data.type === 'Recording') {
             console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
 
             if (typeof unityInstance !== "undefined") {
-              unityInstance.SendMessage("RecordingManagerHost", "OnReceiveRecordingMessage", JSON.stringify(event.data));
+              unityInstance.SendMessage("RecordingManager", "OnReceiveRecordingMessage", JSON.stringify(event.data));
               console.log("✅ Unityスクリプトに録画メッセージ送信しました");
             } else {
               console.warn("⚠️ unityInstanceがまだ定義されていません");
