@@ -56,18 +56,17 @@
       }
 
       window.addEventListener('message', function(event) {
-
         if (event.data) {
 
-	      // アスペクト比送信
-	      if (event.data.type === 'SetAspectRatioByLabel') {
-		    if (typeof unityInstance !== "undefined") {
-        		unityInstance.SendMessage("GamePreviewView", "OnReceiveResolution", JSON.stringify(event.data));
-                console.log("✅ Unityにアスペクト比メッセージを送信しました:", event.data);
-      	        } else {
-        	        console.warn("⚠️ unityInstanceがまだ定義されていません");
-      		}
-    	  }
+          // アスペクト比送信
+          if (event.data.type === 'SetAspectRatioByLabel') {
+            if (typeof unityInstance !== "undefined") {
+              unityInstance.SendMessage("GamePreviewView", "OnReceiveResolution", JSON.stringify(event.data));
+              console.log("✅ Unityにアスペクト比メッセージを送信しました:", event.data);
+            } else {
+              console.warn("⚠️ unityInstanceがまだ定義されていません");
+            }
+          }
 
           // Bubble側からのアセット読み込み要求
           if (event.data.type === 'LoadUnityAsset') {
@@ -150,9 +149,9 @@
               console.warn("⚠️ unityInstanceがまだ定義されていません");
             }
           }
-        } // 録画処理 if
-      } // event.data の全体 if
-    }); // window.addEventListener
+
+        }
+      }); // ← ここが唯一の閉じ括弧
     </script>
   </body>
 </html>
