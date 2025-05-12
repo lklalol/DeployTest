@@ -65,11 +65,25 @@ window.addEventListener('message', function(event) {
       iframe.style.height = event.data.height + 'px';
       console.log(`🖼️ iframeサイズを ${event.data.width}x${event.data.height} に変更`);
     } else {
-      // 元のサイズ（例: 100% x 100vh）に戻す
-      iframe.classList.remove('fixedSize');
-      iframe.style.width = '100%';
-      iframe.style.height = '100vh';
-      console.log("↩️ iframeサイズを初期値に戻しました");
+    // 元のサイズ（例: 100% x 100vh）に戻す
+    iframe.classList.remove('fixedSize');
+    iframe.style.width = '100%';
+    iframe.style.height = '100vh';
+    iframe.removeAttribute('width');
+    iframe.removeAttribute('height');
+
+    const canvas = iframe.contentWindow.document.getElementById('unity-canvas');
+    if (canvas) {
+        canvas.style.width = '100%';
+        canvas.style.height = '100vh';
+        canvas.removeAttribute('width');
+        canvas.removeAttribute('height');
+        console.log("🧼 canvasサイズを初期値に復元しました");
+    } else {
+        console.warn("⚠️ canvasがiframe内で見つかりませんでした");
+    }
+
+    console.log("↩️ iframeサイズを初期値に戻しました");
     }
   }
 });
