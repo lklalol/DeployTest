@@ -150,6 +150,12 @@
                 unityInstance.Module.canvas.height = canvas.height;
                 }
 
+                // Unityインスタンスの描画解像度も再適用
+                if (typeof unityInstance !== "undefined") {
+                    unityInstance.SendMessage("RecordingManager", "ForceRepaint");
+                    console.log("🔁 UnityにForceRepaintを送信しました");
+                }
+
                 console.log("↩️ canvasサイズを100%に戻しました（styleと属性）");
                 }
             }
