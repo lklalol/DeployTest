@@ -1,17 +1,12 @@
 <style>
 #unityIframe {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   border: 0;
   padding: 0;
   margin: 0;
   display: block;
   transition: all 0.3s ease;
-}
-
-.fixedSize {
-  width: unset !important;
-  height: unset !important;
 }
 </style>
 
@@ -19,7 +14,7 @@
   id="unityIframe" 
   src="https://lklalol.github.io/DeployTest/index.html"
   allow="fullscreen"
-  style="width:100%; height:100vh; border:0; overflow:hidden;">
+  style="width:100%; height:100%; border:0; overflow:hidden;">
 </iframe>
 
 <script>
@@ -60,33 +55,36 @@ window.addEventListener('message', function(event) {
     if (!iframe) return;
 
     if (event.data.width > 0 && event.data.height > 0) {
-      iframe.classList.add('fixedSize');
+      // 🎥 録画開始：ピクセルサイズで固定
       iframe.style.width = event.data.width + 'px';
       iframe.style.height = event.data.height + 'px';
       console.log(`🖼️ iframeサイズを ${event.data.width}x${event.data.height} に変更`);
     } else {
-    // 元のサイズ（例: 100% x 100vh）に戻す
-    iframe.classList.remove('fixedSize');
-    iframe.style.width = '100%';
-    iframe.style.height = '100vh';
-    iframe.removeAttribute('width');
-    iframe.removeAttribute('height');
 
-    const canvas = iframe.contentWindow.document.getElementById('unity-canvas');
-    if (canvas) {
-        canvas.style.width = '100%';
-        canvas.style.height = '100vh';
-        canvas.removeAttribute('width');
-        canvas.removeAttribute('height');
-        console.log("🧼 canvasサイズを初期値に復元しました");
-    } else {
-        console.warn("⚠️ canvasがiframe内で見つかりませんでした");
-    }
+      // ✅ iframeサイズを完全に初期化
+      iframe.classList.remove('fixedSize'); // 念のため
+      iframe.style.removeProperty('width');
+      iframe.style.removeProperty('height');
+      iframe.removeAttribute('width');
+      iframe.removeAttribute('height');
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      console.log("↩️ iframeサイズを初期値に戻しました");
 
-    console.log("↩️ iframeサイズを初期値に戻しました");
+      // ✅ 親の wrapper 高さもリセット
+      const wrapper = document.getElementById('unityIframeWrapper');
+      if (wrapper) {
+          wrapper.style.removeProperty('height');
+          wrapper.style.height = '100%';
+          console.log("↩️ 親 wrapper の高さを 100% に戻しました");
+          console.log("📏 wrapper computed height:", wrapper.offsetHeight);
+      }
+
+      // ✅ デバッグログでiframeの高さ確認
+      console.log("📏 iframe computed height:", iframe.offsetHeight);
+      }
     }
-  }
-});
+  });
 
 // Unityへメッセージを送信する関数（再生、停止、シークなど）
 function sendUnityMessage(message) {

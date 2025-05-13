@@ -139,9 +139,20 @@
                 canvas.style.height = '100%';
                 canvas.removeAttribute('width');
                 canvas.removeAttribute('height');
-                console.log("↩️ canvasサイズを初期値に戻しました");
+
+                // ✅ canvas要素のサイズ属性も初期化
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                // ✅ Unityインスタンスの内部canvasサイズも戻す
+                if (typeof unityInstance !== "undefined" && unityInstance.Module?.canvas) {
+                unityInstance.Module.canvas.width = canvas.width;
+                unityInstance.Module.canvas.height = canvas.height;
+                }
+
+                console.log("↩️ canvasサイズを100%に戻しました（styleと属性）");
+                }
             }
-          }
  
           // 録画処理
           if (event.data.type === 'Recording') {
@@ -154,7 +165,6 @@
               console.warn("⚠️ unityInstanceがまだ定義されていません");
             }
           }
-
         }
       });
     </script>

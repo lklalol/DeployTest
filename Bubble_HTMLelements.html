@@ -1,0 +1,79 @@
+Bubble内に設置しているHTMLエレメントの記述一式のまとめです
+
+<style>
+/* ページ全体の余白・スクロールを排除して、100%高でレイアウトさせる */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Bubbleのページ要素を縦方向のFlexレイアウトにして、iframeを下に伸ばす */
+.bubble-element.Page {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* iframeを包むラッパー。Flex構造で残りスペースを占有するために使用 */
+#unityIframeWrapper {
+  flex: 1 1 auto;
+  position: relative;
+  height: 100%;
+}
+
+/* Unity WebGLの表示本体。録画時は一時的にwidth/heightがピクセルで上書きされる */
+#unityIframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+</style>
+
+
+<style>
+  /* アセットリストを強制的にスクロール表示にする設定 */
+  #asset-list {
+    overflow-y: scroll !important;
+    height: 100vh !important;
+  }
+
+/* asset-list（RepeatingGroup）のスクロールバーをカスタム */
+
+#asset-list::-webkit-scrollbar {
+    width: 8px; /* スクロールバーの幅を細めに調整 */
+}
+
+/* スクロールバーの背景（トラック） */
+#asset-list::-webkit-scrollbar-track {
+    background: #1C1C1C; /* 明るいグレー（背景色） */
+    border-radius: 8px; /* 丸みをつけてモダンに */
+}
+
+/* スクロールバーのドラッグ部分（サム） */
+#asset-list::-webkit-scrollbar-thumb {
+    background-color: #424242; /* 少し濃いめのグレー */
+    border-radius: 8px; /* 丸みをつける */
+    /*border: 2px solid #343434; 枠線をつけて見やすく */
+}
+
+/* ホバー時のスクロールバー */
+#asset-list::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0; /* ホバー時はやや濃く */
+}
+
+
+</style>
+
+<!-- Unity WebGL表示部分（録画中はここがピクセル指定に切り替わる） -->
+<div id="unityIframeWrapper">
+  <iframe
+    id="unityIframe"
+    src="https://lklalol.github.io/DeployTest/index.html"
+    allow="fullscreen"
+    style="border:0; overflow:hidden;">
+  </iframe>
+</div>
