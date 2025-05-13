@@ -7,6 +7,15 @@
   margin: 0;
   display: block;
 }
+
+#unityIframeWrapper {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+}
 </style>
 
 <iframe 
@@ -24,28 +33,6 @@ window.addEventListener('message', function(event) {
   if (event.data && event.data.type === 'SceneLoaded') {
     unitySceneLoaded = true;
     console.log("✅ Unityシーンの読み込みが完了しました");
-  }
-
-  // Timeline進捗更新処理（スライダーと連動）
-  if (event.data && (event.data.type === 'TimelineProgress' || event.data.type === 'UpdateBubbleSlider')) {
-    let normalizedValue = parseFloat(event.data.normalizedValue || event.data.normalizedTime);
-    if (isNaN(normalizedValue)) normalizedValue = 0;
-
-    if (window.bubble_fn_timelinePosition) {
-      window.bubble_fn_timelinePosition(normalizedValue * 100);
-    } else {
-      console.warn("⚠️ bubble_fn_timelinePositionが見つかりません。JavaScript to Bubbleの設定を再確認してください。");
-    }
-  }
-
-  // Unityへのファイルアップロード要求処理
-  if (event.data && event.data.action === 'RequestFileUpload') {
-    if (typeof unityInstance !== 'undefined') {
-      unityInstance.SendMessage('WebMessageReceiver', 'RequestFileUpload');
-      console.log("✅ Unityにアップロード要求を送信しました");
-    } else {
-      console.error("⚠️ unityInstanceが未定義です。Unityがロードされているか確認してください");
-    }
   }
 
   // 録画時のiframeのサイズ変更
@@ -85,7 +72,7 @@ window.addEventListener('message', function(event) {
     }
   });
 
-// Unityへメッセージを送信する関数（再生、停止、シークなど）
+// Unityへメッセージを送信する関数
 function sendUnityMessage(message) {
   if (unitySceneLoaded) {
     document.getElementById('unityIframe').contentWindow.postMessage(message, '*');
@@ -94,9 +81,4 @@ function sendUnityMessage(message) {
   }
 }
 
-// 再生制御用関数（これらはBubbleのボタンから呼び出します）
-function PlayTimeline() { sendUnityMessage({ action: "PlayTimeline" }); }
-function PauseTimeline() { sendUnityMessage({ action: "PauseTimeline" }); }
-function StopTimeline() { sendUnityMessage({ action: "StopTimeline" }); }
-function SeekTimeline(normalizedTime) { sendUnityMessage({ action: "SeekTimeline", normalizedTime }); }
 </script>

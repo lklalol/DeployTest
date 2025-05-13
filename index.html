@@ -114,52 +114,6 @@
             }
           }
 
-          // UnityのCanvasサイズ変更
-          if (event.data.type === 'SetIframeResolution') {
-            const canvas = document.getElementById('unity-canvas');
-
-            if (typeof unityInstance === 'undefined' || !unityInstance.Module) {
-                console.warn("⚠️ Unityがまだ完全に初期化されていません。canvasサイズ変更をスキップ");
-                return;
-            }
-
-            if (event.data.width > 0 && event.data.height > 0) {
-                canvas.style.width = event.data.width + 'px';
-                canvas.style.height = event.data.height + 'px';
-                canvas.width = event.data.width;
-                canvas.height = event.data.height;
-
-                // Unity の内部にも通知
-                unityInstance.Module.canvas.width = event.data.width;
-                unityInstance.Module.canvas.height = event.data.height;
-
-                console.log(`🖼️ canvasサイズを ${event.data.width}x${event.data.height} に変更`);
-            } else {
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-                canvas.removeAttribute('width');
-                canvas.removeAttribute('height');
-
-                // ✅ canvas要素のサイズ属性も初期化
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-
-                // ✅ Unityインスタンスの内部canvasサイズも戻す
-                if (typeof unityInstance !== "undefined" && unityInstance.Module?.canvas) {
-                unityInstance.Module.canvas.width = canvas.width;
-                unityInstance.Module.canvas.height = canvas.height;
-                }
-
-                // Unityインスタンスの描画解像度も再適用
-                if (typeof unityInstance !== "undefined") {
-                    unityInstance.SendMessage("RecordingManager", "ForceRepaint");
-                    console.log("🔁 UnityにForceRepaintを送信しました");
-                }
-
-                console.log("↩️ canvasサイズを100%に戻しました（styleと属性）");
-                }
-            }
- 
           // 録画処理
           if (event.data.type === 'Recording') {
             console.log("📨 iframe内で録画メッセージ受信完了:", event.data);

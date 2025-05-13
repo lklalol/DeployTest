@@ -1,0 +1,145 @@
+﻿////////////////////////////////
+// タイムラインUIの制御 //
+////////////////////////////////
+
+<script>
+var unitySceneLoaded = false;
+
+window.addEventListener('message', function(event) {
+  // シーン読み込み完了の処理
+  if (event.data && event.data.type === 'SceneLoaded') {
+    unitySceneLoaded = true;
+    console.log("✅ Unityシーンの読み込みが完了しました");
+  }
+
+  // Timeline進捗更新処理（スライダーと連動）
+  if (event.data && (event.data.type === 'TimelineProgress' || event.data.type === 'UpdateBubbleSlider')) {
+    let normalizedValue = parseFloat(event.data.normalizedValue || event.data.normalizedTime);
+    if (isNaN(normalizedValue)) normalizedValue = 0;
+
+    if (window.bubble_fn_timelinePosition) {
+      window.bubble_fn_timelinePosition(normalizedValue * 100);
+    } else {
+      console.warn("⚠️ bubble_fn_timelinePositionが見つかりません。JavaScript to Bubbleの設定を再確認してください。");
+    }
+  }
+});
+
+// Unityへメッセージを送信する関数（再生、停止、シークなど）
+function sendUnityMessage(message) {
+  if (unitySceneLoaded) {
+    document.getElementById('unityIframe').contentWindow.postMessage(message, '*');
+  } else {
+    console.warn("⚠️ Unityシーンがまだ読み込まれていません！");
+  }
+}
+
+// 再生制御用関数（これらはBubbleのボタンから呼び出します）
+function PlayTimeline() { sendUnityMessage({ action: "PlayTimeline" }); }
+function PauseTimeline() { sendUnityMessage({ action: "PauseTimeline" }); }
+function StopTimeline() { sendUnityMessage({ action: "StopTimeline" }); }
+function SeekTimeline(normalizedTime) { sendUnityMessage({ action: "SeekTimeline", normalizedTime }); }
+</script>
+
+
+////////////////////////////////
+// スクロールバーのRun Javascript //
+////////////////////////////////
+
+<script>
+
+// 動的データでスライダーの値を取得（正しい方法）
+let sliderValue = Number(properties.param1); // ←ここは絶対にparam1を使用
+console.log("Slider value:", sliderValue);
+
+// NaNの場合の安全対策
+if (isNaN(sliderValue)) sliderValue = 0;
+
+// iframe経由でUnityにメッセージ送信（0～1に変換）
+let normalized = sliderValue / 100;
+console.log("Normalized value sent:", normalized);
+document.getElementById("unityIframe").contentWindow.postMessage(
+  { type: "SeekTimeline", normalizedTime: normalized },
+  "*"
+);
+
+</script>
+
+
+////////////////////////////////
+// スクロールバーのデザイン //
+////////////////////////////////
+
+<style>
+  /* アセットリストを強制的にスクロール表示にする設定 */
+  #asset-list {
+    overflow-y: scroll !important;
+    height: 100vh !important;
+  }
+
+/* asset-list（RepeatingGroup）のスクロールバーをカスタム */
+
+#asset-list::-webkit-scrollbar {
+    width: 8px; /* スクロールバーの幅を細めに調整 */
+}
+
+/* スクロールバーの背景（トラック） */
+#asset-list::-webkit-scrollbar-track {
+    background: #1C1C1C; /* 明るいグレー（背景色） */
+    border-radius: 8px; /* 丸みをつけてモダンに */
+}
+
+/* スクロールバーのドラッグ部分（サム） */
+#asset-list::-webkit-scrollbar-thumb {
+    background-color: #424242; /* 少し濃いめのグレー */
+    border-radius: 8px; /* 丸みをつける */
+    /*border: 2px solid #343434; 枠線をつけて見やすく */
+}
+
+/* ホバー時のスクロールバー */
+#asset-list::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0; /* ホバー時はやや濃く */
+}
+</style>
+
+
+////////////////////////////////
+// アップロード Run Javascript //
+////////////////////////////////
+
+
+// BubbleのDropdown Uploadの値を動的に取得する
+let selectedType = "Dropdown Upload's value";
+
+// 表示に基づいて実際にUnityに送る値を設定
+if (selectedType === "Image") selectedType = "Sprite"; // ImageをSpriteに変換
+
+// Unityにメッセージを送信
+document.getElementById("unityIframe").contentWindow.postMessage(
+  { action: "RequestFileUpload", mediaType: selectedType }, "*"
+);
+
+console.log("✅ Unityにアップロード要求を送信しました。メディアタイプ：", selectedType);
+
+////////////////////////////////
+// ドロップダウン解像度変更 Run Javascript //
+////////////////////////////////
+
+let selectedLabel = "Dropdown Resolution's value"; // Bubbleの動的データ
+
+document.getElementById("unityIframe").contentWindow.postMessage({
+  type: "SetAspectRatioByLabel",
+  label: selectedLabel
+}, "*");
+
+
+////////////////////////////////
+// Supabaseからの画像取得 Run Javascript //
+////////////////////////////////
+
+var iframe = document.querySelector('iframe');
+
+iframe.contentWindow.postMessage({
+  type: 'LoadUnityAsset',
+  assetId: 'Current cell's Get Asset's id'
+}, '*');
