@@ -39,10 +39,6 @@
         }).then((instance) => {
             unityInstance = instance;
             window.parent.postMessage({ type: 'UnityReady' }, '*');
-
-            const canvas = document.querySelector("#unity-canvas");
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
 
         function SceneLoadCompleted() {
