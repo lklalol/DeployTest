@@ -24,8 +24,8 @@
 </head>
 <body>
     <canvas id="unity-canvas" width="100%" height="100%" style="width:100vw; height:100vh;"></canvas>
-    <button onclick="nuclearRepaint()" style="position:fixed;top:10px;right:10px;z-index:9999;">
-        ☢ Canvas Repaint
+    <button onclick="microRepaint()" style="position:fixed;top:10px;right:10px;z-index:9999;">
+        🩺 Micro Repaint
     </button>
 
     <script src="Build/Build.loader.js"></script>
@@ -133,37 +133,22 @@
             }
         });
 
-        function nuclearRepaint() {
+        function microRepaint() {
             const canvas = document.getElementById('unity-canvas');
-            if (!canvas || !canvas.parentElement) return;
+            if (!canvas) return;
 
-            const parent = canvas.parentElement;
-            const next = canvas.nextSibling;
+            const originalMargin = canvas.style.marginTop || '0px';
 
-            // サイズ変更
-            canvas.style.width = '99.9vw';
-            canvas.style.height = '99.9vh';
-
-            // リフロー
-            canvas.offsetHeight;
-
-            // visibilityトグル
-            canvas.style.visibility = 'hidden';
-            canvas.offsetHeight;
-
-            // DOM再挿入
-            parent.removeChild(canvas);
+            // 💥 margin で画面レイアウトを物理的に変化させる
+            canvas.style.marginTop = '1px';
+            canvas.offsetHeight; // 強制リフロー
             setTimeout(() => {
-                canvas.style.width = '100vw';
-                canvas.style.height = '100vh';
-                canvas.style.visibility = 'visible';
-                if (next) {
-                    parent.insertBefore(canvas, next);
-                } else {
-                    parent.appendChild(canvas);
-                }
+                canvas.style.marginTop = originalMargin;
+
+                // resizeイベントも偽装で発火（追加刺激）
                 window.dispatchEvent(new Event('resize'));
-                console.log("☢️ nuclearRepaint 完了");
+
+                console.log("🩺 microRepaint 発動：1px物理ズラしで再描画");
             }, 0);
         }
     </script>
