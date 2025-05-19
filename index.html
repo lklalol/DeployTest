@@ -50,19 +50,27 @@
         function updateCanvasResolution() {
             var canvas = document.getElementById("unity-canvas");
 
+            // CSS表示サイズを取得
             var displayWidth = canvas.clientWidth;
             var displayHeight = canvas.clientHeight;
 
-            canvas.width = displayWidth;
-            canvas.height = displayHeight;
+            // devicePixelRatioを取得（多くの場合は1.0～2.0の間）
+            var dpr = Math.min(window.devicePixelRatio, 1.5); // 最大値を1.5などに制限
+
+            // 描画バッファサイズをCSSサイズ×デバイスピクセル比で調整
+            var renderWidth = Math.round(displayWidth * dpr);
+            var renderHeight = Math.round(displayHeight * dpr);
+
+            canvas.width = renderWidth;
+            canvas.height = renderHeight;
 
             var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
             if (gl) {
-                gl.viewport(0, 0, displayWidth, displayHeight);
-                console.log(`✅ Canvas解像度同期: ${displayWidth}x${displayHeight}`);
+                gl.viewport(0, 0, renderWidth, renderHeight);
+                console.log(`✅ Canvas解像度同期: ${renderWidth}x${renderHeight} (dpr:${dpr})`);
 
                 if (unityInstance) {
-                    unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: displayWidth, height: displayHeight }));
+                    unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: renderWidth, height: renderHeight }));
                 }
             }
         }
