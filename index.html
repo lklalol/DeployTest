@@ -40,6 +40,7 @@
             companyName: "DefaultCompany",
             productName: "My project (1)",
             productVersion: "0.1",
+            matchWebGLToCanvasSize: false,
         }).then((instance) => {
             unityInstance = instance;
             window.parent.postMessage({ type: 'UnityReady' }, '*');
