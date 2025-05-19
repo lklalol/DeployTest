@@ -47,36 +47,45 @@
 
         });
 
+        let resizeTimeout = null;
+
         function updateCanvasResolution() {
-            var canvas = document.getElementById("unity-canvas");
+            clearTimeout(resizeTimeout);
 
-            // CSS表示サイズを取得
-            var displayWidth = canvas.clientWidth;
-            var displayHeight = canvas.clientHeight;
+            resizeTimeout = setTimeout(() => {
+                var canvas = document.getElementById("unity-canvas");
 
-            // devicePixelRatioを取得（多くの場合は1.0～2.0の間）
-            var dpr = Math.min(window.devicePixelRatio, 1.5); // 最大値を1.5などに制限
+                var displayWidth = canvas.clientWidth;
+                var displayHeight = canvas.clientHeight;
 
-            // 描画バッファサイズをCSSサイズ×デバイスピクセル比で調整
-            var renderWidth = Math.round(displayWidth * dpr);
-            var renderHeight = Math.round(displayHeight * dpr);
+                var dpr = Math.min(window.devicePixelRatio, 1.5);
 
-            canvas.width = renderWidth;
-            canvas.height = renderHeight;
+                var renderWidth = Math.round(displayWidth * dpr);
+                var renderHeight = Math.round(displayHeight * dpr);
 
-            var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
-            if (gl) {
-                gl.viewport(0, 0, renderWidth, renderHeight);
-                console.log(`✅ Canvas解像度同期: ${renderWidth}x${renderHeight} (dpr:${dpr})`);
-
-                if (unityInstance) {
-                    unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: renderWidth, height: renderHeight }));
+                // Canvasのサイズが既に同じなら更新しない（安全策）
+                if (canvas.width === renderWidth && canvas.height === renderHeight) {
+                    return;
                 }
-            }
+
+                canvas.width = renderWidth;
+                canvas.height = renderHeight;
+
+                var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
+                if (gl) {
+                    gl.viewport(0, 0, renderWidth, renderHeight);
+                    console.log(`✅ Canvas解像度同期: ${renderWidth}x${renderHeight} (dpr:${dpr})`);
+
+                    if (unityInstance) {
+                        unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: renderWidth, height: renderHeight }));
+                    }
+                }
+            }, 200); // 💡 200msのディレイを挟んで安定させる
         }
 
         window.addEventListener('load', updateCanvasResolution);
         window.addEventListener('resize', updateCanvasResolution);
+
 
         // 録画専用の解像度変更用（RecordingManagerから呼び出す）
         function SetCanvasResolution(width, height) {
