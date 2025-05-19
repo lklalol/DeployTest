@@ -58,7 +58,7 @@
                 var displayWidth = canvas.clientWidth;
                 var displayHeight = canvas.clientHeight;
 
-                var dpr = Math.min(window.devicePixelRatio, 1.5);
+                var dpr = Math.min(Math.max(window.devicePixelRatio, 0.5), 1.5);
 
                 var renderWidth = Math.round(displayWidth * dpr);
                 var renderHeight = Math.round(displayHeight * dpr);
