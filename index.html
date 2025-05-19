@@ -121,6 +121,15 @@
 
         function NotifyRecordingStoppedToJS() {
             console.log("✅ Unityから録画終了通知受信。Canvas再調整開始");
+
+            // CSSの再計算を確実に促進
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize')); // resizeイベントを一旦強制発火
+            }, 100); // 100ms待機後に発火 (CSS安定化を待つ)
+
+            // resizeイベント処理の後に、さらに念押しで解像度を再計算する
+            setTimeout(updateCanvasResolution, 300); // 少し遅延を入れて安定させる
+
             updateCanvasResolution();
         }
 
