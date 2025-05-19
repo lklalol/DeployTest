@@ -31,6 +31,7 @@
     <script src="Build/Build.loader.js"></script>
     <script>
         var unityInstance = null;
+        var unityLoaded = false; // Unityのロード完了フラグ
 
         createUnityInstance(document.querySelector("#unity-canvas"), {
             dataUrl: "Build/Build.data",
@@ -43,27 +44,36 @@
             matchWebGLToCanvasSize: false,
         }).then((instance) => {
             unityInstance = instance;
-            window.parent.postMessage({ type: 'UnityReady' }, '*');
-
         });
 
+        // SceneLoadedのメッセージを受信
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.type === 'SceneLoaded') {
+                unityLoaded = true;
+                console.log("✅ Unity側からSceneLoaded通知受信。Canvasサイズ調整を開始します。");
+                updateCanvasResolution(); // ← ロード完了後の初回サイズ調整
+            }
+        });
+
+        // Canvasサイズの安全な変更処理（Unityロード後のみ許可）
         let resizeTimeout = null;
 
         function updateCanvasResolution() {
-            clearTimeout(resizeTimeout);
+            if (!unityLoaded) {
+                console.log("🚧 Unity未ロード: サイズ変更をスキップ");
+                return; // Unity未ロードの間は何もしない
+            }
 
+            clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 var canvas = document.getElementById("unity-canvas");
-
                 var displayWidth = canvas.clientWidth;
                 var displayHeight = canvas.clientHeight;
-
                 var dpr = Math.min(Math.max(window.devicePixelRatio, 0.5), 1.5);
 
                 var renderWidth = Math.round(displayWidth * dpr);
                 var renderHeight = Math.round(displayHeight * dpr);
 
-                // Canvasのサイズが既に同じなら更新しない（安全策）
                 if (canvas.width === renderWidth && canvas.height === renderHeight) {
                     return;
                 }
@@ -71,21 +81,28 @@
                 canvas.width = renderWidth;
                 canvas.height = renderHeight;
 
-                var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
+                var gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
                 if (gl) {
                     gl.viewport(0, 0, renderWidth, renderHeight);
                     console.log(`✅ Canvas解像度同期: ${renderWidth}x${renderHeight} (dpr:${dpr})`);
 
-                    if (unityInstance) {
-                        unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: renderWidth, height: renderHeight }));
-                    }
+                    unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: renderWidth, height: renderHeight }));
+                } else {
+                    console.error("❌ WebGLコンテキストの取得に失敗しました。");
                 }
-            }, 200); // 💡 200msのディレイを挟んで安定させる
+            }, 200);
         }
 
-        window.addEventListener('load', updateCanvasResolution);
-        window.addEventListener('resize', updateCanvasResolution);
+        // 起動時に初期Canvasサイズを固定（安定化のため）
+        window.addEventListener('load', () => {
+            var canvas = document.getElementById("unity-canvas");
+            canvas.width = 1280;
+            canvas.height = 720;
+            console.log("🔒 起動時Canvasサイズ初期固定: 1280x720");
+        });
 
+        // リサイズイベントもUnityロード完了後のみ反映
+        window.addEventListener('resize', updateCanvasResolution);
 
         // 録画専用の解像度変更用（RecordingManagerから呼び出す）
         function SetCanvasResolution(width, height) {
