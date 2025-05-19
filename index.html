@@ -46,15 +46,6 @@
             unityInstance = instance;
         });
 
-        // SceneLoadedのメッセージを受信
-        window.addEventListener('message', function (event) {
-            if (event.data && event.data.type === 'SceneLoaded') {
-                unityLoaded = true;
-                console.log("✅ Unity側からSceneLoaded通知受信。Canvasサイズ調整を開始します。");
-                updateCanvasResolution(); // ← ロード完了後の初回サイズ調整
-            }
-        });
-
         // Canvasサイズの安全な変更処理（Unityロード後のみ許可）
         let resizeTimeout = null;
 
@@ -127,6 +118,13 @@
             console.log("✅ Unity → ブラウザ (録画開始)");
         }
 
+        function NotifyRecordingStoppedToJS() {
+            console.log("✅ Unityから録画終了通知受信。Canvas再調整開始");
+            updateCanvasResolution();
+        }
+
+        window.NotifyRecordingStoppedToJS = NotifyRecordingStoppedToJS;
+
         function SendRecordingStop() {
             window.parent.postMessage({ type: 'Recording', action: 'Stop' }, '*');
             console.log("✅ Unity → ブラウザ (録画停止)");
@@ -134,6 +132,12 @@
 
         window.addEventListener('message', function (event) {
             if (event.data) {
+                // Unityロード完了通知
+                if (event.data.type === 'SceneLoaded') {
+                    unityLoaded = true;
+                    console.log("✅ Unity側からSceneLoaded通知受信。Canvasサイズ調整を開始します。");
+                    updateCanvasResolution();
+                }
 
                 // アスペクト比送信
                 if (event.data.type === 'SetAspectRatioByLabel') {
@@ -170,7 +174,6 @@
                 // ファイルアップロード処理
                 if (event.data.action === "RequestFileUpload") {
                     let mediaType = event.data.mediaType;
-
                     if (typeof mediaType === 'string' && mediaType.length > 0) {
                         unityInstance.SendMessage("WebMessageReceiver", "RequestFileUpload", mediaType);
                         console.log("✅ Unityにメッセージを送信しました。mediaType:", mediaType);
@@ -181,8 +184,6 @@
 
                 // 解像度設定
                 if (event.data.type === 'SetResolution') {
-                    console.log("📨 iframe内で解像度メッセージ受信完了:", event.data);
-
                     if (typeof unityInstance !== "undefined") {
                         unityInstance.SendMessage("RecordingManager", "OnReceiveResolution", JSON.stringify(event.data));
                         console.log("✅ Unityスクリプトに解像度メッセージ送信しました");
@@ -193,8 +194,6 @@
 
                 // 録画処理
                 if (event.data.type === 'Recording') {
-                    console.log("📨 iframe内で録画メッセージ受信完了:", event.data);
-
                     if (typeof unityInstance !== "undefined") {
                         unityInstance.SendMessage("RecordingManager", "OnReceiveRecordingMessage", JSON.stringify(event.data));
                         console.log("✅ Unityスクリプトに録画メッセージ送信しました");
