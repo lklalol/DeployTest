@@ -44,7 +44,25 @@
         }).then((instance) => {
             unityInstance = instance;
             window.parent.postMessage({ type: 'UnityReady' }, '*');
+
+            // ← 起動直後にCanvasサイズを設定
+            initializeCanvasSize();
         });
+
+        function initializeCanvasSize() {
+            var canvas = document.getElementById("unity-canvas");
+            var width = canvas.clientWidth;
+            var height = canvas.clientHeight;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
+            if (gl) {
+                gl.viewport(0, 0, width, height);
+                console.log("✅ 初期Canvas解像度を設定しました: " + width + "x" + height);
+            }
+        }
 
         function SceneLoadCompleted() {
             window.parent.postMessage({ type: 'SceneLoaded' }, '*');
