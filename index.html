@@ -45,27 +45,41 @@
             unityInstance = instance;
             window.parent.postMessage({ type: 'UnityReady' }, '*');
 
-            // ← 起動直後にCanvasサイズを設定
-            initializeCanvasSize();
         });
 
-        function initializeCanvasSize() {
+        function updateCanvasResolution() {
             var canvas = document.getElementById("unity-canvas");
 
-            // 推奨の初期解像度を明示的に設定する（例えば1920x1080）
-            var width = 1920;
-            var height = 1080;
+            var displayWidth = canvas.clientWidth;
+            var displayHeight = canvas.clientHeight;
 
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
+
+            var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
+            if (gl) {
+                gl.viewport(0, 0, displayWidth, displayHeight);
+                console.log(`✅ Canvas解像度同期: ${displayWidth}x${displayHeight}`);
+
+                if (unityInstance) {
+                    unityInstance.SendMessage("CanvasResolutionManager", "OnCanvasResolutionChanged", JSON.stringify({ width: displayWidth, height: displayHeight }));
+                }
+            }
+        }
+
+        window.addEventListener('load', updateCanvasResolution);
+        window.addEventListener('resize', updateCanvasResolution);
+
+        // 録画専用の解像度変更用（RecordingManagerから呼び出す）
+        function SetCanvasResolution(width, height) {
+            var canvas = document.getElementById("unity-canvas");
             canvas.width = width;
             canvas.height = height;
-
-            canvas.style.width = "100%";  // 表示は引き続き画面にフィット
-            canvas.style.height = "100%";
 
             var gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
             if (gl) {
                 gl.viewport(0, 0, width, height);
-                console.log("✅ 初期Canvas解像度（固定）を設定しました: " + width + "x" + height);
+                console.log("✅ 録画用にCanvas解像度設定: " + width + "x" + height);
             }
         }
 
