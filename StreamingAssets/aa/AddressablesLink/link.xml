@@ -1,16 +1,16 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="AsciiArtFilter" preserve="all" />
+    <type fullname="BillboardSprite" preserve="all" />
     <type fullname="CameraControllerWithPoints" preserve="all" />
     <type fullname="FlatKit.OutlineImageEffect" preserve="all" />
     <type fullname="Flockaroo.ColoredPencilsEffect" preserve="all" />
-    <type fullname="Flockaroo.OilPaintingEffect" preserve="all" />
-    <type fullname="Invector.Utils.vComment" preserve="all" />
-    <type fullname="Invector.vCharacterController.vThirdPersonController" preserve="all" />
-    <type fullname="Invector.vCharacterController.vThirdPersonInput" preserve="all" />
+    <type fullname="HammerController" preserve="all" />
     <type fullname="Jobberwocky.MosaicShader.Source.MosaicCameraScript" preserve="all" />
+    <type fullname="LimitlessGlitch13" preserve="all" />
+    <type fullname="LimitlessGlitch8" preserve="all" />
+    <type fullname="LimitlessGlitch9" preserve="all" />
     <type fullname="MegaBook.BookCamera" preserve="all" />
-    <type fullname="MegaBook.BookControl" preserve="all" />
     <type fullname="MegaBook.CameraShake" preserve="all" />
     <type fullname="MegaBook.LightSwing" preserve="all" />
     <type fullname="MegaBook.MegaBook" preserve="all" />
@@ -21,16 +21,16 @@
     <type fullname="MegaBook.MegaBookSkinCover" preserve="all" />
     <type fullname="MegaBook.MegaBookSpineFabric" preserve="all" />
     <type fullname="MegaBook.ShipControl" preserve="all" />
+    <type fullname="MoguraGameManager" preserve="all" />
+    <type fullname="Mole" preserve="all" />
+    <type fullname="MoleSpawner" preserve="all" />
     <type fullname="ObjectRotate" preserve="all" />
+    <type fullname="PinballBallController" preserve="all" />
+    <type fullname="PinballEventTrigger" preserve="all" />
+    <type fullname="PinballGameContinuousRotator" preserve="all" />
+    <type fullname="PinballGameController" preserve="all" />
+    <type fullname="PinballLauncherController" preserve="all" />
     <type fullname="PlayerMovement" preserve="all" />
-    <type fullname="ProjectorSimPro.ProjectorSimPro" preserve="all" />
-    <type fullname="ProjectorSimPro.ProjectorSimProProjectionMapping" preserve="all" />
-    <type fullname="ProjectorSimPro.ProjectorSimProScreen" preserve="all" />
-    <type fullname="ProjectorSimPro.ProjectorSimProScreenGeometry_CAVE" preserve="all" />
-    <type fullname="ProjectorSimPro.ProjectorSimProVirtualCAVE" preserve="all" />
-    <type fullname="ProjectorSimPro.Rotator" preserve="all" />
-    <type fullname="ProjectorSimPro.ThrowBuilder" preserve="all" />
-    <type fullname="ProjectorSimPro.VirtualCaveViewToMaterial" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIllumination" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIlluminationComparer" preserve="all" />
     <type fullname="RadiantGI.RadiantProfile" preserve="all" />
@@ -38,16 +38,10 @@
     <type fullname="RadiantGI.RadiantVolume" preserve="all" />
     <type fullname="SideCameraFollow" preserve="all" />
     <type fullname="SimpleCameraController" preserve="all" />
-    <type fullname="SimpleTrap" preserve="all" />
     <type fullname="SkyboxChanger" preserve="all" />
     <type fullname="SkyboxSwitcher" preserve="all" />
-    <type fullname="TriggerEvent" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLight" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLightProfile" preserve="all" />
-    <type fullname="vThirdPersonCamera" preserve="all" />
-    <type fullname="Invector.vCharacterController.vThirdPersonMotor/vMovementSpeed" preserve="nothing" serialized="true" />
-    <type fullname="ProjectorSimPro.ProjectorDefiner.LensDefinition" preserve="nothing" serialized="true" />
-    <type fullname="ProjectorSimPro.ProjectorDefiner.ProjectorDefinition" preserve="nothing" serialized="true" />
     <type fullname="CameraControllerWithPoints/CameraPoint" preserve="nothing" serialized="true" />
     <type fullname="MegaBook.MegaBookAxis" preserve="nothing" serialized="true" />
     <type fullname="MegaBook.MegaBookBendMod" preserve="nothing" serialized="true" />
@@ -56,6 +50,7 @@
     <type fullname="MegaBook.MegaBookPageObject" preserve="nothing" serialized="true" />
     <type fullname="MegaBook.MegaBookPageParams" preserve="nothing" serialized="true" />
     <type fullname="MegaBook.MegaBookPageTurnEvent" preserve="nothing" serialized="true" />
+    <type fullname="MoguraScoreEvent" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Battlehub.RTEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Battlehub.RTCommon.ExposeToEditor" preserve="all" />
@@ -77,12 +72,14 @@
   </assembly>
   <assembly fullname="sc.posteffects.runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="SCPE.Dithering" preserve="all" />
+    <type fullname="SCPE.Kuwahara" preserve="all" />
     <type fullname="SCPE.Overlay" preserve="all" />
     <type fullname="SCPE.Scanlines" preserve="all" />
     <type fullname="SCPE.Sketch" preserve="all" />
     <type fullname="SCPE.Overlay/BlendModeParameter" preserve="nothing" serialized="true" />
     <type fullname="SCPE.Sketch/SketchModeParameter" preserve="nothing" serialized="true" />
     <type fullname="SCPE.Sketch/SketchProjectioParameter" preserve="nothing" serialized="true" />
+    <type fullname="SCPE.Kuwahara/KuwaharaModeParam" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UniHumanoid, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UniHumanoid.AvatarDescription" preserve="all" />
@@ -143,12 +140,28 @@
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.LegacyResourcesProvider" preserve="all" />
     <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
   </assembly>
+  <assembly fullname="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="TMPro.TextMeshProUGUI" preserve="all" />
+    <type fullname="TMPro.TMP_FontAsset" preserve="all" />
+    <type fullname="TMPro.FaceInfo_Legacy" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.FontAssetCreationSettings" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.KerningTable" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_Character" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true" />
+    <type fullname="TMPro.VertexGradient" preserve="nothing" serialized="true" />
+  </assembly>
   <assembly fullname="Unity.Timeline, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Timeline.ActivationPlayableAsset" preserve="all" />
+    <type fullname="UnityEngine.Timeline.ActivationTrack" preserve="all" />
     <type fullname="UnityEngine.Timeline.AnimationPlayableAsset" preserve="all" />
     <type fullname="UnityEngine.Timeline.AnimationTrack" preserve="all" />
     <type fullname="UnityEngine.Timeline.AudioPlayableAsset" preserve="all" />
     <type fullname="UnityEngine.Timeline.AudioTrack" preserve="all" />
+    <type fullname="UnityEngine.Timeline.ControlPlayableAsset" preserve="all" />
+    <type fullname="UnityEngine.Timeline.ControlTrack" preserve="all" />
     <type fullname="UnityEngine.Timeline.GroupTrack" preserve="all" />
+    <type fullname="UnityEngine.Timeline.MarkerTrack" preserve="all" />
     <type fullname="UnityEngine.Timeline.TimelineAsset" preserve="all" />
     <type fullname="UnityEngine.Timeline.MarkerList" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Timeline.TimelineAsset/EditorSettings" preserve="nothing" serialized="true" />
@@ -157,6 +170,7 @@
     <type fullname="UnityEngine.Timeline.AudioMixerProperties" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Animation" preserve="all" />
     <type fullname="UnityEngine.AnimationClip" preserve="all" />
     <type fullname="UnityEngine.Animator" preserve="all" />
     <type fullname="UnityEngine.Avatar" preserve="all" />
@@ -165,6 +179,7 @@
   <assembly fullname="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.AudioClip" preserve="all" />
     <type fullname="UnityEngine.AudioListener" preserve="all" />
+    <type fullname="UnityEngine.AudioSource" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.ClothModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Cloth" preserve="all" />
@@ -176,8 +191,8 @@
     <type fullname="UnityEngine.FlareLayer" preserve="all" />
     <type fullname="UnityEngine.GameObject" preserve="all" />
     <type fullname="UnityEngine.Light" preserve="all" />
+    <type fullname="UnityEngine.LightingSettings" preserve="all" />
     <type fullname="UnityEngine.LightmapSettings" preserve="all" />
-    <type fullname="UnityEngine.LODGroup" preserve="all" />
     <type fullname="UnityEngine.Material" preserve="all" />
     <type fullname="UnityEngine.Mesh" preserve="all" />
     <type fullname="UnityEngine.MeshFilter" preserve="all" />
@@ -197,9 +212,10 @@
     <type fullname="UnityEngine.Transform" preserve="all" />
     <type fullname="UnityEngine.Events.PersistentCallGroup" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.ExposedReference`1[Cinemachine.CinemachineVirtualCameraBase]" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.Events.UnityEvent" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.ExposedReference`1[UnityEngine.GameObject]" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.ArgumentCache" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.PersistentListenerMode" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.Events.UnityEvent" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.DirectorModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Playables.PlayableDirector" preserve="all" />
@@ -212,6 +228,7 @@
     <type fullname="UnityEngine.BoxCollider" preserve="all" />
     <type fullname="UnityEngine.CapsuleCollider" preserve="all" />
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
+    <type fullname="UnityEngine.PhysicMaterial" preserve="all" />
     <type fullname="UnityEngine.Rigidbody" preserve="all" />
     <type fullname="UnityEngine.SphereCollider" preserve="all" />
   </assembly>
@@ -261,5 +278,11 @@
     <type fullname="VRM.OffsetOnTransform" preserve="nothing" serialized="true" />
     <type fullname="VRM.VRMFirstPerson/RendererFirstPersonFlags" preserve="nothing" serialized="true" />
     <type fullname="VRM.VRMSpringBoneColliderGroup/SphereCollider" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="UnityEngine.TextCoreFontEngineModule">
+    <type fullname="UnityEngine.TextCore.FaceInfo" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.TextCore.Glyph" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.TextCore.GlyphMetrics" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.TextCore.GlyphRect" preserve="nothing" serialized="true" />
   </assembly>
 </linker>
