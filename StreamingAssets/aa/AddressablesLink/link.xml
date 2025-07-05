@@ -30,13 +30,11 @@
     <type fullname="PinballGameContinuousRotator" preserve="all" />
     <type fullname="PinballGameController" preserve="all" />
     <type fullname="PinballLauncherController" preserve="all" />
-    <type fullname="PlayerMovement" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIllumination" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIlluminationComparer" preserve="all" />
     <type fullname="RadiantGI.RadiantProfile" preserve="all" />
     <type fullname="RadiantGI.RadiantVirtualEmitter" preserve="all" />
     <type fullname="RadiantGI.RadiantVolume" preserve="all" />
-    <type fullname="SideCameraFollow" preserve="all" />
     <type fullname="SimpleCameraController" preserve="all" />
     <type fullname="SkyboxChanger" preserve="all" />
     <type fullname="SkyboxSwitcher" preserve="all" />
