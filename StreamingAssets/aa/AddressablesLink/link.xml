@@ -38,6 +38,8 @@
     <type fullname="SimpleCameraController" preserve="all" />
     <type fullname="SkyboxChanger" preserve="all" />
     <type fullname="SkyboxSwitcher" preserve="all" />
+    <type fullname="TextMeshProEditable" preserve="all" />
+    <type fullname="TMPClickable" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLight" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLightProfile" preserve="all" />
     <type fullname="CameraControllerWithPoints/CameraPoint" preserve="nothing" serialized="true" />
