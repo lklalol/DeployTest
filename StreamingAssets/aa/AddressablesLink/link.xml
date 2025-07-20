@@ -3,9 +3,12 @@
     <type fullname="AsciiArtFilter" preserve="all" />
     <type fullname="BillboardSprite" preserve="all" />
     <type fullname="CameraControllerWithPoints" preserve="all" />
+    <type fullname="FallReset" preserve="all" />
     <type fullname="FlatKit.OutlineImageEffect" preserve="all" />
     <type fullname="Flockaroo.ColoredPencilsEffect" preserve="all" />
     <type fullname="HammerController" preserve="all" />
+    <type fullname="HoleMole" preserve="all" />
+    <type fullname="HoleMoleSpawner" preserve="all" />
     <type fullname="Jobberwocky.MosaicShader.Source.MosaicCameraScript" preserve="all" />
     <type fullname="LimitlessGlitch13" preserve="all" />
     <type fullname="LimitlessGlitch8" preserve="all" />
@@ -22,7 +25,6 @@
     <type fullname="MegaBook.MegaBookSpineFabric" preserve="all" />
     <type fullname="MegaBook.ShipControl" preserve="all" />
     <type fullname="MoguraGameManager" preserve="all" />
-    <type fullname="Mole" preserve="all" />
     <type fullname="MoleSpawner" preserve="all" />
     <type fullname="ObjectRotate" preserve="all" />
     <type fullname="PinballBallController" preserve="all" />
@@ -30,16 +32,21 @@
     <type fullname="PinballGameContinuousRotator" preserve="all" />
     <type fullname="PinballGameController" preserve="all" />
     <type fullname="PinballLauncherController" preserve="all" />
+    <type fullname="PlayerMovement" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIllumination" preserve="all" />
     <type fullname="RadiantGI.RadiantGlobalIlluminationComparer" preserve="all" />
     <type fullname="RadiantGI.RadiantProfile" preserve="all" />
     <type fullname="RadiantGI.RadiantVirtualEmitter" preserve="all" />
     <type fullname="RadiantGI.RadiantVolume" preserve="all" />
+    <type fullname="SelectableUIImage" preserve="all" />
+    <type fullname="SideCameraFollow" preserve="all" />
     <type fullname="SimpleCameraController" preserve="all" />
+    <type fullname="SimpleTrap" preserve="all" />
     <type fullname="SkyboxChanger" preserve="all" />
     <type fullname="SkyboxSwitcher" preserve="all" />
     <type fullname="TextMeshProEditable" preserve="all" />
     <type fullname="TMPClickable" preserve="all" />
+    <type fullname="TriggerEvent" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLight" preserve="all" />
     <type fullname="VolumetricLights.VolumetricLightProfile" preserve="all" />
     <type fullname="CameraControllerWithPoints/CameraPoint" preserve="nothing" serialized="true" />
